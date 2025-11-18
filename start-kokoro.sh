@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -e
+
+# Ensure we are in the project root
+cd "$(dirname "$0")"
+PROJECT_ROOT=$(pwd)
+
+# Define the submodule path
+KOKORO_DIR="external/Kokoro-FastAPI"
+
+# Create virtual environment if it doesn't exist (in the root)
+if [ ! -d ".venv" ]; then
+    echo "Creating virtual environment in .venv..."
+    uv venv
+fi
+
+# Activate virtual environment
+source .venv/bin/activate
+
+# Navigate to the submodule
+if [ ! -d "$KOKORO_DIR" ]; then
+    echo "Error: Directory $KOKORO_DIR not found!"
+    exit 1
+fi
+cd "$KOKORO_DIR"
+
+# Set environment variables for Kokoro
+# The original script used PWD, which is now the submodule dir
+export USE_GPU=true
+export USE_ONNX=false
+export PYTHONPATH=$(pwd):$(pwd)/api
+export MODEL_DIR=src/models
+export VOICES_DIR=src/voices/v1_0
+export WEB_PLAYER_PATH=$(pwd)/web
+
+echo "Installing dependencies..."
+uv pip install -e ".[gpu]"
+
+echo "Downloading models..."
+uv run --no-sync python docker/scripts/download_model.py --output api/src/models/v1_0
+
+echo "Starting Kokoro FastAPI..."
+uv run --no-sync uvicorn api.src.main:app --host 0.0.0.0 --port 8880

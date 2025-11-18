@@ -33,7 +33,7 @@ clean: clean-llama clean-ik clean-ollama
 
 # Start the Kokoro FastAPI server (GPU)
 start-kokoro:
-    cd external/Kokoro-FastAPI && ./start-gpu.sh
+    ./start-kokoro.sh
 
 # ==========================================
 # llama.cpp

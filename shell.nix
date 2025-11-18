@@ -39,7 +39,7 @@ pkgs.mkShell {
     export CUDA_HOME="${pkgs.cudaPackages.cudatoolkit}"
     export CUDA_TOOLKIT_ROOT_DIR="${pkgs.cudaPackages.cudatoolkit}"
     export CMAKE_CUDA_COMPILER="${pkgs.cudaPackages.cuda_nvcc}/bin/nvcc"
-    export LD_LIBRARY_PATH="${pkgs.cudaPackages.cudatoolkit}/lib:${pkgs.cudaPackages.cuda_cudart}/lib:/run/opengl-driver/lib:$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.zlib}/lib:${pkgs.cudaPackages.cudatoolkit}/lib:${pkgs.cudaPackages.cuda_cudart}/lib:/run/opengl-driver/lib:$LD_LIBRARY_PATH"
     export PATH="${pkgs.cudaPackages.cuda_nvcc}/bin:$PATH"
 
     # SSL Certificate for Python/uv
