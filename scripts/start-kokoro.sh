@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-# Ensure we are in the project root
-cd "$(dirname "$0")"
+# Ensure we are in the project root (one level up from scripts/)
+cd "$(dirname "$0")/.."
 PROJECT_ROOT=$(pwd)
 
 # Define the submodule path

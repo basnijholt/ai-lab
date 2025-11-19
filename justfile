@@ -40,7 +40,7 @@ sync-agent-cli:
 
 # Start the Kokoro FastAPI server (GPU)
 start-kokoro:
-    nix-shell --run ./start-kokoro.sh
+    nix-shell --run ./scripts/start-kokoro.sh
 
 sync-kokoro:
     cd external/Kokoro-FastAPI && git checkout master && git pull origin master
