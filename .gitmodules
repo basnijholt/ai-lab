@@ -10,3 +10,6 @@
 [submodule "Kokoro-FastAPI"]
 	path = external/Kokoro-FastAPI
 	url = https://github.com/remsky/Kokoro-FastAPI.git
+[submodule "external/agent-cli"]
+	path = external/agent-cli
+	url = git@github.com:basnijholt/agent-cli.git
