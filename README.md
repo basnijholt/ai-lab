@@ -76,12 +76,8 @@ You can also target specific projects:
 > [!NOTE]
 > This setup is specifically tailored for a machine with **NVIDIA CUDA-compatible hardware**.
 
-*   **Build Flags:** Configured in `justfile`. Currently set to:
-    ```makefile
-    cmake_flags := '-DGGML_CUDA=ON -DGGML_BLAS=ON -DGGML_NATIVE=ON -DCMAKE_CUDA_ARCHITECTURES="86"'
-    ```
-    *Note: `CMAKE_CUDA_ARCHITECTURES="86"` targets NVIDIA Ampere GPUs (e.g., **RTX 3090**). Adjust this if you are using different hardware.*
-*   **Environment:** Defined in `shell.nix`. It ensures `LD_LIBRARY_PATH` includes necessary CUDA and C++ libraries for Python extensions (fixing common `libstdc++` issues).
+*   **Build Flags:** Configured in `justfile`. These include flags for CUDA support and hardware-specific architectures (e.g., targeting NVIDIA Ampere GPUs).
+*   **Environment:** Defined in `shell.nix`. It ensures `LD_LIBRARY_PATH` includes necessary CUDA and C++ libraries for Python extensions.
 
 ## 🖥️ System Configuration
 
