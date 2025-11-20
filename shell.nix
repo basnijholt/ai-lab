@@ -29,6 +29,14 @@ pkgs.mkShell {
     cudaPackages.cuda_cudart
     cudaPackages.cuda_cccl
     cudaPackages.libcublas
+    cudaPackages.cudnn
+
+    # System libraries (ComfyUI & others)
+    stdenv.cc.cc.lib
+    zlib
+    libGL
+    glib
+    openssl
 
     # Optional dependencies
     curl
@@ -42,7 +50,29 @@ pkgs.mkShell {
     export CUDA_HOME="${pkgs.cudaPackages.cudatoolkit}"
     export CUDA_TOOLKIT_ROOT_DIR="${pkgs.cudaPackages.cudatoolkit}"
     export CMAKE_CUDA_COMPILER="${pkgs.cudaPackages.cuda_nvcc}/bin/nvcc"
-    export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.zlib}/lib:${pkgs.cudaPackages.cudatoolkit}/lib:${pkgs.cudaPackages.cuda_cudart}/lib:/run/opengl-driver/lib:$LD_LIBRARY_PATH"
+    
+    # Setup library paths
+    export LD_LIBRARY_PATH=${
+      pkgs.lib.makeLibraryPath [
+        "/run/opengl-driver"
+        pkgs.stdenv.cc.cc.lib
+        pkgs.zlib
+        pkgs.cudaPackages.cudatoolkit
+        pkgs.cudaPackages.cuda_cudart
+        pkgs.cudaPackages.cudnn
+        pkgs.libGL
+        pkgs.openssl
+      ]
+    }:$LD_LIBRARY_PATH
+
+    export LIBRARY_PATH=${
+      pkgs.lib.makeLibraryPath [
+        pkgs.cudaPackages.cudatoolkit
+        pkgs.zlib
+        pkgs.openssl
+      ]
+    }:$LIBRARY_PATH
+
     export PATH="${pkgs.cudaPackages.cuda_nvcc}/bin:$PATH"
 
     # SSL Certificate for Python/uv

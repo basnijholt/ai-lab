@@ -23,7 +23,7 @@ build: build-llama build-ik build-ollama
 rebuild: rebuild-llama rebuild-ik rebuild-ollama
 
 # Update all repositories (git pull)
-sync: sync-llama sync-ik sync-ollama sync-kokoro sync-agent-cli
+sync: sync-llama sync-ik sync-ollama sync-kokoro sync-agent-cli sync-comfyui
 
 # Clean all build artifacts
 clean: clean-llama clean-ik clean-ollama
@@ -113,3 +113,46 @@ clean-ollama:
 
 sync-ollama:
     cd external/ollama && git checkout main && git pull origin main
+
+# ==========================================
+# ComfyUI
+# ==========================================
+
+# Install ComfyUI environment and dependencies
+install-comfyui:
+    #!/usr/bin/env bash
+    set -e
+    echo "Installing ComfyUI dependencies..."
+    cd external/ComfyUI
+    
+    # Ensure Manager is present before installing requirements
+    if [ ! -d custom_nodes/comfyui-manager ]; then
+        echo "Cloning ComfyUI Manager..."
+        git clone https://github.com/ltdrdata/ComfyUI-Manager.git custom_nodes/comfyui-manager
+    fi
+
+    if [ ! -d .venv-comfyui ]; then uv venv .venv-comfyui -p 3.12; fi
+    source .venv-comfyui/bin/activate
+    uv pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu128
+    uv pip install -r requirements.txt
+    uv pip install -r custom_nodes/comfyui-manager/requirements.txt
+    echo "ComfyUI installation complete in .venv-comfyui."
+
+# Start ComfyUI server
+start-comfyui:
+    @echo "Starting ComfyUI..."
+    cd external/ComfyUI && source .venv-comfyui/bin/activate && python main.py --listen
+
+# Update ComfyUI and Manager
+sync-comfyui:
+    #!/usr/bin/env bash
+    set -e
+    cd external/ComfyUI
+    git checkout master && git pull origin master
+    if [ -d custom_nodes/comfyui-manager ]; then
+        echo "Updating ComfyUI Manager..."
+        cd custom_nodes/comfyui-manager && git checkout main && git pull origin main
+    else
+        echo "Cloning ComfyUI Manager..."
+        git clone https://github.com/ltdrdata/ComfyUI-Manager.git custom_nodes/comfyui-manager
+    fi

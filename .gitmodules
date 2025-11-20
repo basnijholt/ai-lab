@@ -13,3 +13,6 @@
 [submodule "external/agent-cli"]
 	path = external/agent-cli
 	url = git@github.com:basnijholt/agent-cli.git
+[submodule "external/ComfyUI"]
+	path = external/ComfyUI
+	url = https://github.com/comfyanonymous/ComfyUI.git
