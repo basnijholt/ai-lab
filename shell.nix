@@ -37,6 +37,7 @@ pkgs.mkShell {
     libGL
     glib
     openssl
+    glibc.bin  # Provides ldconfig for Triton
 
     # Optional dependencies
     curl
@@ -61,6 +62,12 @@ pkgs.mkShell {
         pkgs.cudaPackages.cuda_cudart
         pkgs.cudaPackages.cudnn
         pkgs.libGL
+        pkgs.glib.out
+        pkgs.xorg.libX11
+        pkgs.xorg.libXext
+        pkgs.xorg.libXrender
+        pkgs.xorg.libICE
+        pkgs.xorg.libSM
         pkgs.openssl
       ]
     }:$LD_LIBRARY_PATH
@@ -73,10 +80,13 @@ pkgs.mkShell {
       ]
     }:$LIBRARY_PATH
 
-    export PATH="${pkgs.cudaPackages.cuda_nvcc}/bin:$PATH"
+    export PATH="${pkgs.cudaPackages.cuda_nvcc}/bin:${pkgs.glibc.bin}/bin:$PATH"
 
     # SSL Certificate for Python/uv
     export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+
+    # Triton CUDA library path (avoids ldconfig call on NixOS)
+    export TRITON_LIBCUDA_PATH="${pkgs.cudaPackages.cuda_cudart}/lib"
 
     echo "Environment loaded. Use 'just' to run commands."
   '';

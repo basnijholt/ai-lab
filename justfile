@@ -133,10 +133,19 @@ install-comfyui:
 
     if [ ! -d .venv-comfyui ]; then uv venv .venv-comfyui -p 3.12; fi
     source .venv-comfyui/bin/activate
+    uv pip install pip  # Ensure pip is installed for nodes that call it via subprocess
+    uv pip install huggingface_hub  # Required for authenticated downloads
+    uv pip install opencv-python-headless  # Avoid X11 dependencies and runtime reinstalls
     uv pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu128
+    uv pip install --no-build-isolation sageattention  # Used by ComfyUI-WanVideoWrapper
     uv pip install -r requirements.txt
     uv pip install -r custom_nodes/comfyui-manager/requirements.txt
     echo "ComfyUI installation complete in .venv-comfyui."
+
+# Login to Hugging Face (for downloading restricted models)
+login-hf:
+    @echo "Please paste your Hugging Face token when prompted."
+    @source external/ComfyUI/.venv-comfyui/bin/activate && huggingface-cli login
 
 # Start ComfyUI server
 start-comfyui:
